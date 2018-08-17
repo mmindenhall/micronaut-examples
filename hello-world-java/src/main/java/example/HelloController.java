@@ -32,6 +32,7 @@ public class HelloController {
 
     @Get("/hello/{name}")
     public Single<String> hello(@NotBlank String name) {
+        System.out.println(String.format("%s [%s] hello endpoint invoked", Thread.currentThread().getName(), "HelloController"));
         return Single.just("Hello " + name + "!");
     }
 }

@@ -27,6 +27,7 @@ class HelloController {
 
     @Get("/hello/{name}")
     fun hello(name: String): String {
+        println("${Thread.currentThread().name} [HelloController] hello endpoint invoked")
         return "Hello $name"
     }
 }
