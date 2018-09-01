@@ -33,7 +33,6 @@ class HelloController {
     companion object: KLogging()
 
     @Inject
-    @Named("myMongoClient")
     private lateinit var mongoClient: MongoClient
 
     @Value("\${mongodb.db}")

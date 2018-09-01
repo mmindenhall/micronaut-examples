@@ -2,10 +2,7 @@ package example
 
 import com.mongodb.MongoClient
 import io.micronaut.configuration.mongo.reactive.DefaultMongoConfiguration
-import io.micronaut.context.annotation.Bean
-import io.micronaut.context.annotation.Factory
-import io.micronaut.context.annotation.Requirements
-import io.micronaut.context.annotation.Requires
+import io.micronaut.context.annotation.*
 import mu.KLogging
 import javax.inject.Named
 import javax.inject.Singleton
@@ -20,7 +17,7 @@ class MyMongoClientFactory {
 
     @Bean(preDestroy = "close")
     @Singleton
-    @Named("myMongoClient")
+    @Replaces(MongoClient::class)
     fun myMongoClient(configuration: DefaultMongoConfiguration): MongoClient {
         logger.info { "===== creating myMongoClient" }
         return MongoClient(configuration.buildURI())

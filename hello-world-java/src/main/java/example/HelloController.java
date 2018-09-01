@@ -39,7 +39,7 @@ import javax.validation.constraints.NotBlank;
 public class HelloController {
     private static final Logger log = LoggerFactory.getLogger(HelloController.class);
 
-    @Inject @Named("myMongoClient") MongoClient mongoClient;
+    @Inject MongoClient mongoClient;
 
     @Value("${mongodb.db}") String dbName;
     @Value("${mongodb.collection}") String collection;
