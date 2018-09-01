@@ -40,6 +40,11 @@ dependencies {
     compile "io.micronaut:runtime"
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.2.31"
     compile "org.jetbrains.kotlin:kotlin-reflect:1.2.31"
+
+    compile "io.micronaut.configuration:mongo-reactive"
+    compile "org.mongodb:mongo-java-driver"
+    compile "io.github.microutils:kotlin-logging:1.5.6"
+
     compileOnly "io.micronaut:inject-java"
     kapt "io.micronaut:inject-java"
     kaptTest "io.micronaut:inject-java"

@@ -15,8 +15,13 @@
  */
 package example
 
+import com.mongodb.MongoClient
+import io.micronaut.context.annotation.Value
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get
+import mu.KLogging
+import javax.inject.Inject
+import javax.inject.Named
 
 /**
  * @author James Kleeh
@@ -25,8 +30,26 @@ import io.micronaut.http.annotation.Get
 @Controller("/")
 class HelloController {
 
+    companion object: KLogging()
+
+    @Inject
+    @Named("myMongoClient")
+    private lateinit var mongoClient: MongoClient
+
+    @Value("\${mongodb.db}")
+    private lateinit  var dbName: String
+
+    @Value("\${mongodb.collection}")
+    private lateinit var collection: String
+
     @Get("/hello/{name}")
     fun hello(name: String): String {
+
+        logger.info { "===== using injected mongoClient" }
+        val db = mongoClient.getDatabase(dbName)
+        val col = db.getCollection(collection)
+        logger.info { "===== collection ${col.namespace.collectionName} has ${col.countDocuments()} documents" }
+
         return "Hello $name"
     }
 }
