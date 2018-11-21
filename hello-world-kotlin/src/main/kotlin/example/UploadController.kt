@@ -37,16 +37,21 @@ class UploadController {
         val upload: Single<Result<Boolean>> = Flowable.fromPublisher(dataFile)
                 .subscribeOn(Schedulers.io())
                 .map<Result<Boolean>> { p: PartData ->
-                    try {
-                        val bytes = p.bytes
-                        IOUtils.write(bytes, out)
-//                        val n = IOUtils.copyLarge(p.inputStream, out)
-//                        logger.info { "===== copied chunk of $n bytes, starts with:\n${String(p.bytes.sliceArray(0..200))}" }
-                        logger.info { "===== copied chunk of ${bytes.size} bytes, starts with:\n${String(bytes.sliceArray(0..59)).replace("\n", "\\n")}" }
-                        Result.Success(true)
-                    } finally {
-                        p.inputStream.close()
-                    }
+                    // original code fixed to call p.InputStream just once per @jameskleeh
+//                    val inStr = p.inputStream
+//                    try {
+//                        val n = IOUtils.copyLarge(inStr, out)
+//                        logger.info { "===== copied chunk of $n bytes" }
+//                        Result.Success(true)
+//                    } finally {
+//                        inStr.close()
+//                    }
+
+                    // alternative using p.bytes
+                    val bytes = p.bytes
+                    IOUtils.write(bytes, out)
+                    logger.info { "===== copied chunk of ${bytes.size} bytes, starts with:${if (bytes.size > 0) String(bytes.sliceArray(0..29)).replace("\n", "\\n") else ""}" }
+                    Result.Success(true)
                 }
                 .onErrorReturn { t -> Result.Error(t) }
                 .reduce {_, _ -> Result.Success(true) }
