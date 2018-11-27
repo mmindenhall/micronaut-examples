@@ -34,24 +34,22 @@ class UploadController {
         val out = FileOutputStream(tempFile)
         logger.info { "===== attempting to write uploaded file to ${tempFile.absolutePath}" }
 
+        var chunkNum = 0
+
         val upload: Single<Result<Boolean>> = Flowable.fromPublisher(dataFile)
                 .subscribeOn(Schedulers.io())
                 .map<Result<Boolean>> { p: PartData ->
-                    // original code fixed to call p.InputStream just once per @jameskleeh
-//                    val inStr = p.inputStream
-//                    try {
-//                        val n = IOUtils.copyLarge(inStr, out)
-//                        logger.info { "===== copied chunk of $n bytes" }
-//                        Result.Success(true)
-//                    } finally {
-//                        inStr.close()
-//                    }
-
-                    // alternative using p.bytes
-                    val bytes = p.bytes
-                    IOUtils.write(bytes, out)
-                    logger.info { "===== copied chunk of ${bytes.size} bytes, starts with:${if (bytes.size > 0) String(bytes.sliceArray(0..29)).replace("\n", "\\n") else ""}" }
-                    Result.Success(true)
+                    val inStr = p.inputStream
+                    try {
+                        val n = IOUtils.copyLarge(inStr, out)
+                        if (chunkNum % 10000 == 0) {
+                            logger.info { "===== copied chunk #${chunkNum}, size $n bytes" }
+                        }
+                        chunkNum++
+                        Result.Success(true)
+                    } finally {
+                        inStr.close()
+                    }
                 }
                 .onErrorReturn { t -> Result.Error(t) }
                 .reduce {_, cur -> cur }

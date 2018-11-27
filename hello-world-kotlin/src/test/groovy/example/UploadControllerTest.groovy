@@ -3,10 +3,13 @@ package example
 import com.fasterxml.jackson.databind.ObjectMapper
 import example.model.DataSet
 import example.model.Response
+import groovy.util.logging.Slf4j
 import io.micronaut.context.ApplicationContext
 import io.micronaut.http.HttpResponse
 import io.micronaut.http.HttpStatus
 import io.micronaut.http.MediaType
+import io.micronaut.http.client.DefaultHttpClient
+import io.micronaut.http.client.DefaultHttpClientConfiguration
 import io.micronaut.http.client.HttpClient
 import io.micronaut.http.client.multipart.MultipartBody
 import io.micronaut.runtime.server.EmbeddedServer
@@ -14,12 +17,21 @@ import spock.lang.AutoCleanup
 import spock.lang.Shared
 import spock.lang.Specification
 
+import java.time.Duration
+
 import static io.micronaut.http.HttpRequest.POST
 
+@Slf4j
 class UploadControllerTest extends Specification {
 
     @Shared @AutoCleanup EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer)
-    @Shared @AutoCleanup HttpClient client = HttpClient.create(embeddedServer.URL)
+    @Shared @AutoCleanup HttpClient client = new DefaultHttpClient(
+            embeddedServer.URL,
+            new DefaultHttpClientConfiguration(
+                    readTimeout: Duration.ofMinutes(5),
+                    readIdleTimeout: Duration.ofMinutes(10)
+            )
+    )
 
     @Shared ObjectMapper mapper = new ObjectMapper()
     @Shared def tenantId = UUID.randomUUID().toString()
@@ -35,7 +47,18 @@ class UploadControllerTest extends Specification {
 
     def "test very large file"() {
         given:
-        File f = new File(getClass().getResource('/big.txt').toURI())
+        // create a large temporary file
+        log.info("===== creating temporary file")
+        def filePath = "${System.getProperty("java.io.tmpdir")}/very_large_file.avro"
+        File f = new File(filePath)
+        f.deleteOnExit()
+        RandomAccessFile vlf = new RandomAccessFile(f, "rw")
+        try {
+            vlf.setLength((long)(1024L * 1024L * 1024L * gbMult))
+        } finally {
+            vlf.close()
+        }
+        log.info("===== created temporary file")
 
         MultipartBody requestBody = MultipartBody.builder()
                 .addPart("dataSet", "dataSet.json", MediaType.APPLICATION_JSON_TYPE, dataSetJson.bytes)
@@ -55,5 +78,10 @@ class UploadControllerTest extends Specification {
         DataSet dSet = mapper.convertValue(postResp.body().data, DataSet.class)
         dSet.dataSourceId == "dsId1"
         dSet.mode == "FULL"
+
+        where:
+        gbMult | _
+        1.999  | _
+        2      | _
     }
 }

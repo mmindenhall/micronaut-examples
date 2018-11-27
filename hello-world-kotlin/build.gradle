@@ -29,11 +29,12 @@ repositories {
     mavenLocal()
     mavenCentral()
     maven { url "https://jcenter.bintray.com" }
+    maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
 }
 
 dependencyManagement {
     imports {
-        mavenBom 'io.micronaut:micronaut-bom:1.0.1'
+        mavenBom 'io.micronaut:micronaut-bom:1.0.2.BUILD-SNAPSHOT'
     }
 }
 
@@ -47,13 +48,7 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
     compileOnly "io.micronaut:micronaut-inject-java"
     kapt "io.micronaut:micronaut-inject-java"
-//    kaptTest "io.micronaut:micronaut-inject-java"
-//    testCompile "org.jetbrains.spek:spek-api:$spekVersion"
-//    testRuntime "org.jetbrains.spek:spek-junit-platform-engine:$spekVersion"
-//    testCompile "org.junit.jupiter:junit-jupiter-api:$junitVersion"
-//    testRuntime "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
     runtime "ch.qos.logback:logback-classic:1.2.3"
-//    testCompile "junit:junit:4.12"
     testCompile "io.micronaut:micronaut-inject-java"
 
     // Added by MM for spock tests (had to disable spek)
@@ -70,10 +65,6 @@ shadowJar {
 }
 
 mainClassName = "example.Application"
-
-//test {
-//    useJUnitPlatform()
-//}
 
 compileJava.options.compilerArgs += '-parameters'
 compileTestJava.options.compilerArgs += '-parameters'
