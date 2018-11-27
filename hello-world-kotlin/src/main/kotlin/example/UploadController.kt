@@ -54,7 +54,7 @@ class UploadController {
                     Result.Success(true)
                 }
                 .onErrorReturn { t -> Result.Error(t) }
-                .reduce {_, _ -> Result.Success(true) }
+                .reduce {_, cur -> cur }
                 .toSingle()
 
         // wait for upload to complete
