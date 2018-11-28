@@ -48,6 +48,7 @@ class UploadControllerTest extends Specification {
     def "test very large file"() {
         given:
         // create a large temporary file
+        log.info("\n\n===== Starting test with file size $gbMult GB =====\n\n")
         log.info("===== creating temporary file")
         def filePath = "${System.getProperty("java.io.tmpdir")}/very_large_file.avro"
         File f = new File(filePath)
