@@ -49,13 +49,12 @@ class UploadControllerTest extends Specification {
         given:
         // create a large temporary file
         log.info("\n\n===== Starting test with file size $gbMult GB =====\n\n")
-        log.info("===== creating temporary file")
         def filePath = "${System.getProperty("java.io.tmpdir")}/very_large_file.avro"
         File f = new File(filePath)
-        f.deleteOnExit()
+//        f.deleteOnExit()
         RandomAccessFile vlf = new RandomAccessFile(f, "rw")
         try {
-            vlf.setLength((long)(1024L * 1024L * 1024L * gbMult))
+            vlf.setLength((long)(1024L * 1024L * 1024L * gbMult)) // gbMult Gigabytes
         } finally {
             vlf.close()
         }
@@ -82,7 +81,7 @@ class UploadControllerTest extends Specification {
 
         where:
         gbMult | _
-        1.999  | _
-        2      | _
+//        0.01   | _
+        2.1      | _
     }
 }

@@ -6,8 +6,7 @@ micronaut:
     max-request-size: 10GB
     multipart:
       enabled: true
-      #      disk: true
-      #      location: ${TMPDIR}
+      disk: true
       max-file-size: 10GB
       read-idle-timeout: 30s
       write-idle-timeout: 30s
