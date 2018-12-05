@@ -1,0 +1,16 @@
+---
+micronaut:
+  application:
+    name: data-api
+  server:
+    max-request-size: 10GB
+    multipart:
+      enabled: true
+      disk: true
+      max-file-size: 10GB
+      read-idle-timeout: 30s
+      write-idle-timeout: 30s
+      idle-timeout: 30s
+    netty:
+      max-chunk-size: 1MB
+#      log-level: INFO
