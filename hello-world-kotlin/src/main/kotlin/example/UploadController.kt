@@ -42,7 +42,7 @@ class UploadController {
                     val inStr = p.inputStream
                     try {
                         val n = IOUtils.copyLarge(inStr, out)
-                        if (chunkNum % 10000 == 0) {
+                        if (backoff(chunkNum)) {
                             logger.info { "===== copied chunk #${chunkNum}, size $n bytes" }
                         }
                         chunkNum++
@@ -51,8 +51,10 @@ class UploadController {
                         inStr.close()
                     }
                 }
-                .onErrorReturn { t -> Result.Error(t) }
                 .reduce {_, cur -> cur }
+                .doOnComplete { logger.info { "===== onComplete was invoked" } }
+                .doOnError { logger.info { "===== onError was invoked" } }
+                .onErrorReturn { t -> Result.Error(t) }
                 .toSingle()
 
         // wait for upload to complete

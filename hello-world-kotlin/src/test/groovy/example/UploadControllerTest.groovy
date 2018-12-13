@@ -28,7 +28,7 @@ class UploadControllerTest extends Specification {
     @Shared @AutoCleanup HttpClient client = new DefaultHttpClient(
             embeddedServer.URL,
             new DefaultHttpClientConfiguration(
-                    readTimeout: Duration.ofMinutes(5),
+                    readTimeout: Duration.ofMinutes(10),
                     readIdleTimeout: Duration.ofMinutes(10)
             )
     )
@@ -82,6 +82,6 @@ class UploadControllerTest extends Specification {
         where:
         gbMult | _
 //        0.01   | _
-        2.1      | _
+        0.2     | _
     }
 }
