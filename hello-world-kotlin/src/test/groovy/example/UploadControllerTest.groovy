@@ -82,6 +82,6 @@ class UploadControllerTest extends Specification {
         where:
         gbMult | _
 //        0.01   | _
-        0.2     | _
+        5.0     | _
     }
 }

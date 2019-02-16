@@ -37,6 +37,7 @@ class UploadController {
         var chunkNum = 0
 
         val upload: Single<Result<Boolean>> = Flowable.fromPublisher(dataFile)
+                .doOnComplete { logger.info { "===== onComplete was invoked" } }
                 .subscribeOn(Schedulers.io())
                 .map<Result<Boolean>> { p: PartData ->
                     val inStr = p.inputStream
@@ -52,8 +53,6 @@ class UploadController {
                     }
                 }
                 .reduce {_, cur -> cur }
-                .doOnComplete { logger.info { "===== onComplete was invoked" } }
-                .doOnError { logger.info { "===== onError was invoked" } }
                 .onErrorReturn { t -> Result.Error(t) }
                 .toSingle()
 
