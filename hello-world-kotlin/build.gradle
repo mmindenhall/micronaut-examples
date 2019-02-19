@@ -19,6 +19,8 @@ group "example"
 apply plugin:"io.spring.dependency-management"
 apply plugin:"com.github.johnrengelman.shadow"
 apply plugin:"application"
+apply plugin:"groovy"
+apply plugin:"java"
 apply plugin:"kotlin"
 apply plugin:"kotlin-kapt"
 
@@ -27,11 +29,12 @@ repositories {
     mavenLocal()
     mavenCentral()
     maven { url "https://jcenter.bintray.com" }
+    maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
 }
 
 dependencyManagement {
     imports {
-        mavenBom 'io.micronaut:micronaut-bom:1.0.3'
+        mavenBom "io.micronaut:micronaut-bom:$micronautVersion"
     }
 }
 
@@ -44,14 +47,27 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
     compile "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
     compileOnly "io.micronaut:micronaut-inject-java"
+
+    // Micronaut Mongo support
+    compile "io.micronaut.configuration:micronaut-mongo-reactive:1.1.0.BUILD-SNAPSHOT"
+    compile "org.mongodb:mongo-java-driver"
+    compile("org.litote.kmongo:kmongo:$kmongoVersion") {
+        exclude group: 'org.mongodb'
+    }
+    testCompile "de.flapdoodle.embed:de.flapdoodle.embed.mongo:$embeddedMongoVersion"
+
+    compile "io.github.microutils:kotlin-logging:$kotlinLoggingVersion"
+    testCompile "io.micronaut.test:micronaut-test-spock:${micronautTestVersion}"
+    testCompile "io.micronaut:micronaut-inject-groovy"
+
     kapt "io.micronaut:micronaut-inject-java"
-    kaptTest "io.micronaut:micronaut-inject-java"
-    testCompile "org.jetbrains.spek:spek-api:$spekVersion"
-    testRuntime "org.jetbrains.spek:spek-junit-platform-engine:$spekVersion"
-    testCompile "org.junit.jupiter:junit-jupiter-api:$junitVersion"
-    testRuntime "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
+//    kaptTest "io.micronaut:micronaut-inject-java"
+//    testCompile "org.jetbrains.spek:spek-api:$spekVersion"
+//    testRuntime "org.jetbrains.spek:spek-junit-platform-engine:$spekVersion"
+//    testCompile "org.junit.jupiter:junit-jupiter-api:$junitVersion"
+//    testRuntime "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
     runtime "ch.qos.logback:logback-classic:1.2.3"
-    testCompile "junit:junit:4.12"
+//    testCompile "junit:junit:4.12"
     testCompile "io.micronaut:micronaut-inject-java"
 }
 
@@ -61,9 +77,9 @@ shadowJar {
 
 mainClassName = "example.Application"
 
-test {
-    useJUnitPlatform()
-}
+//test {
+//    useJUnitPlatform()
+//}
 
 compileKotlin {
     kotlinOptions {

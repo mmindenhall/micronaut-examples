@@ -1,0 +1,13 @@
+---
+micronaut:
+    application:
+        name: mn-app
+    http:
+        client:
+            follow-redirects: false
+
+mongodb:
+    uri: mongodb://localhost
+    db-name: testDB
+    collection-name: test
+    
